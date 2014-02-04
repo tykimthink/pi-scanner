@@ -1,0 +1,152 @@
+<html>
+	<head>
+		<title>PI-Scanner</title>
+		<link rel='stylesheet' type="text/css" href='/style.css' > </link>
+		<script type='text/javascript' src='/script.js' > </script>
+	</head>
+	<body>
+		<table class="layoutTable">
+			<tr>
+				<td class="titleBarContainer"  
+					style="border-right: 1px solid gray; text-align: center">
+					<img style="vertical-align:middle;" src="pi_logo.png" height="100%"/>
+					<b class='title'>PI-Scanner</b>&nbsp;
+				</td>
+				<td class="titleBarContainer" style="text-align: right; vertical-align:middle
+					line-height: 40px;" id="menuBarTop">
+					<img src="/loading-white.gif" style="display: none;" id="loadingIcon" 
+						height="40px" />
+				</td>
+			</tr>
+			<tr>
+				<td class="sidebarContainer">
+					<ul style="padding:10px; line-height: 30px;">
+						<li onclick="sideMenuItem_Click('0');" class='sideMenuItem'>
+							Home
+						</li>
+						<li onclick="sideMenuItem_Click('1');" class='sideMenuItem'>
+							Manual Control
+						</li>
+						<li onclick="sideMenuItem_Click('2');" class='sideMenuItem'>
+							Calibration
+						</li>
+						<li onclick="sideMenuItem_Click('3');" class='sideMenuItem'>
+							Perform Scan
+						</li>
+						<li onclick="sideMenuItem_Click('4');" class='sideMenuItem'>
+							Scan History
+						</li><hr/>
+						<li onclick="sideMenuItem_Click('5');" class='sideMenuItem'>
+							About
+						</li>
+					</ul>
+				</td>
+				<td class="mainContentContainer">
+					
+					<div class="contentContainer" id="contentContainer0" name="ContainerHome">
+						<h1>Home</h1>
+					</div>
+
+					<div class="contentContainer" id="contentContainer1" name="ContainerControls"
+						style="display:block;">
+						<table class='layoutTable'>
+							<tr>
+								<td style="width: 300px;" class="sidebarContainer">
+									<div style="padding:10px;">
+										<p>
+											<b>Manual Camera Control</b>
+											<hr/>
+								<table class="layoutTable">
+								<tr>
+									<td style="width:50%; text-align:center;">
+										<div class="button" style="width:85%;">
+											<img src="/arrow_left.png" alt="move camera left"
+												style="width:32px; height:32px; margin: 5px;"/>
+										</div>
+									</td>
+									<td style="width:50%;text-align: center;">
+										<div class="button" style="width:85%;">
+											<img alt="move camera right" src="/arrow_right.png" 
+												style="width:32px; height:32px; margin: 5px;"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										&nbsp;
+									</td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr>
+									<td style="width:50%;text-align:center;">
+										<input type="number" value="90" style="width:85%; height:100%;
+											border-radius:5px; font-size:18px;"
+											min="0" max="180" />
+									</td>
+									<td style="width:50%;text-align: center;">
+										<div class="button" style="width:85%;"/>
+											Goto<br/>Position
+										</div>
+									</td>
+								</tr>
+								</table>
+									<br/>
+								</p>
+								<p>
+									<b>Laser Controls</b>
+									<hr/>
+									<table class="layoutTable">
+									<tr>
+										<td style="width:50%;text-align: center;">
+											<div class="button" style="width:85%; color:red;
+												height:30px; line-height:30px;"/>
+												OFF
+											</div>
+										</td>
+										<td style="width:50%;text-align: center;">
+											<div class="button" style="width:85%; color:green;
+												height:30px; line-height:30px;"/>
+												ON
+											</div>
+										</td>
+									</tr>
+									</table>
+								</p>
+
+									</div>
+								</td>
+								<td style="text-align: center;">
+									<img id="manualCameraPicture" src="/loading.gif"/>
+									<div style="padding-top: 10px;" id="manualCameraText">
+										Loading Camera Stream...
+									</div> 
+								</td>
+							</tr>
+						</table>
+					</div>
+
+					<div class="contentContainer" id="contentContainer2" name="ContainerCalibration">
+						<h1>Calibration</h1>
+					</div>
+
+					<div class="contentContainer" id="contentContainer3" name="ContainerScan">
+						<h1>Perform Scan</h1>
+					</div>
+
+					<div class="contentContainer" id="contentContainer4" name="ContainerHistory">
+						<h1>Scan History</h1>
+					</div>
+
+					<div class="contentContainer" id="contentContainer5" name="ContainerAbout">
+						<h1>About</h1>
+					</div>
+
+				</td>
+			</tr>
+		</table>
+
+
+	</body>
+</html>
