@@ -8,12 +8,17 @@ import http.server
 from socketserver import ThreadingMixIn
 import threading
 
-import camera
+import picamera
+
+from camera import CameraInterface
 
 apiPrefix = "/API/"
 apiArgStringSep = "?"
 apiArgStringDelim = "&"
 apiClassFuncSep = "."
+
+cam = CameraInterface()
+
 class APIHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
@@ -35,6 +40,11 @@ class APIHandler(http.server.SimpleHTTPRequestHandler):
                     print(key+":\t"+value)
             print("Page: \t"+page)
             print("Function:\t"+function)
+
+            if(function == "getLatestFrame"):
+                print("Updated latest frame!")
+                cam.save_latest()
+
         else:
             super().do_GET()
 
