@@ -15,9 +15,12 @@ cam_defaults = {"resolution": (840, 640),
 class CameraInterface:
 
     def __init__(self):
-        self.cam = picamera.PiCamera()
-        self.configure_camera(cam_defaults)
-        print("Initialized camera interface!")
+        try:
+            self.cam = picamera.PiCamera()
+            self.configure_camera(cam_defaults)
+            print("Initialized camera interface!")
+        except:
+            print("[ERROR] Could not initialize the camera interface!")
 
     def configure_camera(self, configDict):
         """

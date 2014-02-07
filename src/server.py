@@ -8,7 +8,10 @@ import http.server
 from socketserver import ThreadingMixIn
 import threading
 
-import picamera
+try:
+    import picamera
+except:
+    print("[ERROR] Could not import the picamera module!")
 
 from camera import CameraInterface
 
@@ -42,8 +45,9 @@ class APIHandler(http.server.SimpleHTTPRequestHandler):
             print("Function:\t"+function)
 
             if(function == "getLatestFrame"):
-                print("Updated latest frame!")
                 cam.save_latest()
+                print("Updated latest frame!")
+                self.send_response(200)
 
         else:
             super().do_GET()
