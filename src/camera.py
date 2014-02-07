@@ -1,13 +1,25 @@
-#!/usr/bin/python3
+#!/usr/bin/python2
 """
 Provides access to the camera. This level of abstraction means that as long as the rest of the 
 program only uses this interface we can switch between the raspberry pi camera module and a
 USB webcam.
 """
+
+raspi_available = False
+opencv_available = False
+
 try:
     import picamera
+    raspi_available = True
+    print("Imported picamera module")
 except:
     print("[ERROR] Could not import the picamera module!")
+try:
+    import cv2
+    opencv_available = True
+    print("Imported opencv module")
+except:
+    print("[ERROR] Could not import the opencv2 module!")
 
 cam_defaults = {"resolution": (840, 640),
 "rotation": 180}
@@ -16,9 +28,16 @@ class CameraInterface:
 
     def __init__(self):
         try:
-            self.cam = picamera.PiCamera()
-            self.configure_camera(cam_defaults)
-            print("Initialized camera interface!")
+            if(raspi_available):
+                self.cam = picamera.PiCamera()
+                self.configure_camera(cam_defaults)
+                print("Initialized camera interface using picamera")
+            elif(opencv_available):
+                self.cam = cv2.VideoCapture(0)
+                print("Initialized camera interface using opencv")
+            else:
+                print("[ERROR] No webcam interface opencv_available!")
+
         except:
             print("[ERROR] Could not initialize the camera interface!")
 
@@ -51,7 +70,17 @@ class CameraInterface:
         """
         Saves the latest frame taken to web/cam_latest.jpg
         """
-        self.cam.capture("web/cam_latest.jpg")
+        if(raspi_available):
+            self.cam.capture("web/cam_latest.jpg")
+            return True
+        elif(opencv_available):
+            ret, frame = self.cam.read()
+            cv2.imwrite("web/cam_latest.jpg", frame)
+            return ret
+        else:
+            print("[ERROR] No webcam interface opencv_available!")
+            return False
+
 
 
 if(__name__=="__main__"):
