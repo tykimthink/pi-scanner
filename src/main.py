@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python2
 """
 This file is the main start point for the server program. It initialises the webserver, connects
 to the camera and performs general housekeeping.

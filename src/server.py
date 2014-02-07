@@ -1,17 +1,12 @@
-#!/usr/bin/python3
+#!/usr/bin/python2
 """
 Contains the server component class for the application. It handles all web interface features
 including client-side API calls.
 """
-
-import http.server
-from socketserver import ThreadingMixIn
+from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from SocketServer import ThreadingMixIn
 import threading
-
-try:
-    import picamera
-except:
-    print("[ERROR] Could not import the picamera module!")
+import SimpleHTTPServer
 
 from camera import CameraInterface
 
@@ -22,7 +17,7 @@ apiClassFuncSep = "."
 
 cam = CameraInterface()
 
-class APIHandler(http.server.SimpleHTTPRequestHandler):
+class APIHandler(SimpleHTTPServer.SimpleHTTPRequestHandler, object):
 
     def do_GET(self):
         if(self.path.startswith(apiPrefix)):
@@ -45,14 +40,17 @@ class APIHandler(http.server.SimpleHTTPRequestHandler):
             print("Function:\t"+function)
 
             if(function == "getLatestFrame"):
-                cam.save_latest()
-                print("Updated latest frame!")
-                self.send_response(200)
+                result = cam.save_latest()
+                if(result):
+                    print("Updated latest frame!")
+                    self.send_response(200)
+                else:
+                    self.send_response(500)
 
         else:
-            super().do_GET()
+            super(APIHandler, self).do_GET()
 
-class InterfaceServer(ThreadingMixIn, http.server.HTTPServer):
+class InterfaceServer(ThreadingMixIn, HTTPServer):
     """Handle requests in a separate thread."""
 
 def test():
