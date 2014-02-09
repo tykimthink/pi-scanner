@@ -39,11 +39,22 @@ class APIHandler(SimpleHTTPServer.SimpleHTTPRequestHandler, object):
             print("Page: \t"+page)
             print("Function:\t"+function)
 
-            if(function == "getLatestFrame"):
+            if(function == "saveLatestFrame"):
                 result = cam.save_latest()
                 if(result):
                     print("Updated latest frame!")
                     self.send_response(200)
+                else:
+                    self.send_response(500)
+
+            elif(function == "getLatestFrame"):
+                result = cam.capture()
+                if(result != None):
+                    print("Captured latest frame!")
+                    self.send_response(200)
+                    self.send_header("Content-type", "image/jpeg")
+                    self.end_headers()
+                    self.wfile.write(result)
                 else:
                     self.send_response(500)
 

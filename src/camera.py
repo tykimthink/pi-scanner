@@ -5,6 +5,8 @@ program only uses this interface we can switch between the raspberry pi camera m
 USB webcam.
 """
 
+import numpy
+
 raspi_available = False
 opencv_available = False
 
@@ -81,6 +83,28 @@ class CameraInterface:
             print("[ERROR] No webcam interface opencv_available!")
             return False
 
+
+    def capture(self):
+        """
+        Saves the latest frame taken a memory buffer for sending over a network.
+        """
+
+        tr = None
+        if(raspi_available):
+            self.cam.capture(stream, "jpeg")
+            tr = io.BytesIO()
+        elif(opencv_available):
+            ret, frame = self.cam.read()
+            if(ret):
+                ret, val = cv2.imencode(".jpg", frame)
+                tr = val
+            else:
+                return None
+        else:
+            print("[ERROR] No webcam interface opencv_available!")
+            return None
+
+        return numpy.array(tr).tostring()
 
 
 if(__name__=="__main__"):

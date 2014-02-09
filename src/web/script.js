@@ -3,7 +3,7 @@
     This section contains all of the global variables for the page.
 */
 var background_jobs = 0;
-
+var image_refresh_handle;
 /*
     Runs when the page is first loaded and sets up things like automatic request calls
     and status updates.
@@ -12,7 +12,7 @@ function on_page_load()
 {
     inc_busy();
     var manual_control_image = document.getElementById('manualCameraPicture');
-    manual_control_image.src="/web/cam_latest.jpg";
+    manual_control_image.src="/API/getLatestFrame";
     dec_busy();
 }
 
@@ -40,7 +40,7 @@ function sideMenuItem_Click(target)
  Asynchronously requests for the latest frame from the camera (stored server-side) be updated.
  If the request is successful then the manual camera control picture is updated.
 */
-function grab_latest_frame()
+function save_latest_frame()
 {
     inc_busy();
     var xmlhttp;
@@ -56,13 +56,41 @@ function grab_latest_frame()
     {
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
-            var manual_control_image = document.getElementById('manualCameraPicture');
-            manual_control_image.src="/web/cam_latest.jpg";
             dec_busy();
         }
     }
     xmlhttp.open("GET","/API/getLatestFrame",true);
     xmlhttp.send();
+}
+
+/*
+ Asynchronously requests for the latest frame from the camera (stored server-side) be updated.
+ If the request is successful then the manual camera control picture is updated.
+*/
+function grab_latest_frame()
+{
+    inc_busy();
+    var manual_control_image = document.getElementById('manualCameraPicture');
+    manual_control_image.src="/API/getLatestFrame";
+    dec_busy();
+}
+
+/*
+
+*/
+function toggle_image_auto_refresh()
+{
+    var button = document.getElementById('manualToggleAutoRefresh');
+    if(button.style.color=='red')
+    {
+        button.style.color='green';
+        image_refresh_handle = window.setInterval("grab_latest_frame();",100);
+    }
+    else
+    {
+        window.clearInterval(image_refresh_handle);
+        button.style.color='red';
+    }
 }
 
 /*
