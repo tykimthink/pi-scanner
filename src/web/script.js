@@ -13,6 +13,7 @@ function on_page_load()
     inc_busy();
     var manual_control_image = document.getElementById('manualCameraPicture');
     manual_control_image.src="/API/getLatestFrame";
+    calibration_menu_load();
     dec_busy();
 }
 
@@ -132,4 +133,111 @@ function update_busy_indicator()
     {
         icon.style.display='none';
     }
+}
+
+/*
+    Performs a generic API callback and returns the response text to the caller.
+*/
+function callback_get(target)
+{
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.open("GET",target,false);
+    xmlhttp.send();
+    return xmlhttp.responseText;
+}
+
+/*
+    Fires whenever the calibration menu is loaded
+*/
+function calibration_menu_load()
+{
+    inc_busy();
+    var selBox = document.getElementById("CalibrationFileList");
+    var existingFiles = callback_get("/API/Calibration.getAll");
+    selBox.innerHTML = "";
+    var list = existingFiles.split("\n");
+    for (var i = 0; i< list.length -1; i++)
+    {
+        filename = list[i].split(",")[0];
+        title = list[i].split(",")[1];
+        var option = document.createElement("option");
+        option.text = title;
+        option.value = filename;
+        selBox.add(option,selBox[1]);
+    }
+    var o1 = document.createElement("option");
+    o1.text = "-----------------------------";
+    o1.value = "None";
+    selBox.add(o1,selBox[0]);
+    var o2 = document.createElement("option");
+    o2.text = "Create New";
+    o2.value = "Action_New";
+    selBox.add(o2,selBox[0]);
+    var o3 = document.createElement("option");
+    o3.text = "Select A File To Load:";
+    o3.value = "None";
+    selBox.add(o3,selBox[0]);
+    dec_busy();
+}
+
+/*
+    Loads a calibration file whenever the current selection changes.
+*/
+function load_calibration_file()
+{
+    inc_busy();
+    var selBox = document.getElementById("CalibrationFileList");
+    fileName = selBox.options[selBox.selectedIndex].value;
+    if(fileName == "None")
+    {
+        // Do Nothing!
+    }
+    else if(fileName == "Action_New")
+    {
+        newName = callback_get("/API/Calibration.newBlank");
+        var option = document.createElement("option");
+        option.text = "New Empty Calibration File";
+        option.value = newName;
+        selBox.add(option);
+        selBox.selectedIndex = selBox.options.length-1;
+    }
+    else
+    {
+        var nameBox = document.getElementById("calibration_current_name");
+        var notesBox = document.getElementById("calibration_current_description");
+        var cameraBox = document.getElementById("calibration_current_camera");
+        var laserAngleBox = document.getElementById("calibration_current_angle");
+        var laserDistanceBox = document.getElementById("calibration_current_distance");
+
+        nameBox.value = callback_get("/API/Calibration.LoadEl?file="+fileName+"&el=name");
+        notesBox.value = callback_get("/API/Calibration.LoadEl?file="+fileName+"&el=notes");
+        cameraBox.value = callback_get("/API/Calibration.LoadEl?file="+fileName+"&el=camera");
+        laserAngleBox.value = callback_get("/API/Calibration.LoadEl?file="+fileName+"&el=laser-camera-angle");
+        laserDistanceBox.value = callback_get("/API/Calibration.LoadEl?file="+fileName+"&el=laser-camera-distance");
+
+
+        var pointsBox = document.getElementById("calibration_current_points");
+        pointsBox.innerHTML="";
+        var list = callback_get("/API/Calibration.LoadEl?file="+fileName+"&el=data").split("\n");
+        
+        for (var i = 0; i< list.length -1; i++)
+        {
+            X = list[i].split(",")[0];
+            Z = list[i].split(",")[1];
+            var point = document.createElement("option");
+            point.text = X +"\t->\t"+Z;
+            point.value = X+","+Z;
+            pointsBox.add(point);
+        }
+
+    }
+    dec_busy();
 }

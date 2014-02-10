@@ -9,6 +9,7 @@ import threading
 import SimpleHTTPServer
 
 from camera import CameraInterface
+import Calibrate
 
 apiPrefix = "/API/"
 apiArgStringSep = "?"
@@ -57,6 +58,30 @@ class APIHandler(SimpleHTTPServer.SimpleHTTPRequestHandler, object):
                     self.wfile.write(result)
                 else:
                     self.send_response(500)
+            elif(page == "Calibration"):
+                if(function=="newBlank"):
+                    newFile = Calibrate.newBlankFile()
+                    print("Created new calibration file: "+newFile)
+                    self.send_response(200)
+                    self.send_header("Content-type", "text/text")
+                    self.end_headers()
+                    self.wfile.write(bytes(newFile))
+                elif(function == "getAll"):
+                    print("Fetching list of available config files...")
+                    self.send_response(200)
+                    self.send_header("Content-type", "text/text")
+                    self.end_headers()
+                    files = Calibrate.listCalibrationFiles()
+                    for f in files:
+                        self.wfile.write(bytes(f+","+files[f]+"\n"))
+                elif(function == "LoadEl"):
+                    print("Loading element from file...")
+                    result = Calibrate.getElement(args["file"], args["el"])
+                    self.send_response(200)
+                    self.send_header("Content-type", "text/text")
+                    self.end_headers()
+                    self.wfile.write(bytes(result))
+
 
         else:
             super(APIHandler, self).do_GET()

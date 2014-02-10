@@ -157,20 +157,17 @@
                               <tr>
       
       <td class="sidebarContainer" style="width:500px; padding:10px; ">
+        <div class="title">Camera Calibration
+        <select id="CalibrationFileList" onchange="load_calibration_file();" >
+            <option value="None"></option>
+            <option value="Action_New">Create New</option>
+            <option value="None">---------------------------</option>
+        </select>
+        </div><hr/>
+
         <table class="layoutTable" style="height:;">
             <tr>
-            <td colspan="2">
-                <div class="title">Camera Calibration
-                <select id="CalibrationFileList" onchange="load_calibration_file();" >
-                    <option value="None">Select A File To Load:</option>
-                    <option value="Action_New">Create New</option>
-                    <option value="None">---------------------------</option>
-                </select>
-                </div><hr/>
-            </td>
-            </tr>
-            <tr>
-                <td width="50%">
+                <td width="150px">
                     File Title:
                 </td>
                 <td>
@@ -178,7 +175,7 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                <td width="150px">
                     Description:
                 </td>
                 <td>
@@ -187,7 +184,7 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                <td width="150px">
                     Camera:
                 </td>
                 <td>
@@ -195,7 +192,7 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                <td width="150px">
                     Laser to Camera Angle:
                 </td>
                 <td>
@@ -203,7 +200,7 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                <td width="150px">
                     Laser to Camera Distance:
                 </td>
                 <td>
@@ -211,19 +208,18 @@
                 </td>
             </tr>
             <tr>
-                <td style="border-top: 1px solid gray; vertical-align:top; padding:3px;"><hr/>
-                    <div class="button" style="width:100%;">Save File</div><hr/>
-                    X: <input type="number" id="calibration_current_new_x" style="width:90px;"/>&nbsp;
-                    Z: <input type="number" id="calibration_current_new_z" style="width:90px;"/>
-                    <div class="button" style="width:100%;">Add New Point</div><hr/>
-                    <div class="button" style="width:100%;">Remove Selected</div><hr/>
-                    <div class="button" style="width:100%; color:red;">Auto Set X</div><hr/>
-                    <div class="button" style="width:100%; color:red;">Delete File</div><hr/>
+                <td colspan="2" style="height:100%; border-top: 1px solid gray;">
+                    X: <input type="number" id="calibration_current_new_x"/>&nbsp;
+                    Z: <input type="number" id="calibration_current_new_z"/>
+                    <input type="button" value="Add Point" />
                 </td>
-                <td width="50%" style="border-top: 1px solid gray;  padding:3px;">
-                <select id="calibration_current_points" size="15"  style="height:100%; width:100%;">
+            </tr>
+            <tr>
+                <td colspan="2" style="height:100%;">
+                    <select id="calibration_current_points" size="15" 
+                        style="height:100%; width:100%;">
 
-                </select>
+                    </select>
                 </td>
             </tr>
         </table>
