@@ -72,7 +72,9 @@ function grab_latest_frame()
 {
     inc_busy();
     var manual_control_image = document.getElementById('manualCameraPicture');
+    var calibration_control_image = document.getElementById('calibrationLaserImage');
     manual_control_image.src="/API/getLatestFrame";
+    calibrationLaserImage.src="/API/getLatestFrame";
     dec_busy();
 }
 
@@ -82,15 +84,18 @@ function grab_latest_frame()
 function toggle_image_auto_refresh()
 {
     var button = document.getElementById('manualToggleAutoRefresh');
+    var button2 = document.getElementById('calibrateToggleAutoRefresh');
     if(button.style.color=='red')
     {
         button.style.color='green';
+        button2.style.color='green';
         image_refresh_handle = window.setInterval("grab_latest_frame();",100);
     }
     else
     {
         window.clearInterval(image_refresh_handle);
         button.style.color='red';
+        button2.style.color='red';
     }
 }
 
@@ -153,6 +158,25 @@ function callback_get(target)
     xmlhttp.send();
     return xmlhttp.responseText;
 }
+/*
+    Performs a generic API callback and returns the response text to the caller.
+*/
+function callback_post(target, data)
+{
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.open("POST",target,false);
+    xmlhttp.setRequestHeader("Content-type","text/text");
+    xmlhttp.send(data);
+    return xmlhttp.responseText;
+}
 
 /*
     Fires whenever the calibration menu is loaded
@@ -189,6 +213,95 @@ function calibration_menu_load()
 }
 
 /*
+    Adds a new point to the list of calibration points and orders them by the X value
+*/
+function calibration_add_point()
+{
+    var newXBox = document.getElementById("calibration_current_new_x");
+    var newZBox = document.getElementById("calibration_current_new_z");
+    var pointsBox = document.getElementById("calibration_current_points");  
+    
+    var point = document.createElement("option");
+    point.text = newXBox.value +" = "+newZBox.value;
+    point.value = newXBox.value;
+    pointsBox.add(point);
+
+    calibration_sort_points();
+}
+
+function calibration_remove_point()
+{
+    var pointsBox = document.getElementById("calibration_current_points");  
+    pointsBox.remove(pointsBox.selectedIndex);
+}
+
+/*
+    Sorts the calibration points by x coordinate.
+*/
+function calibration_sort_points()
+{
+    // From http://stackoverflow.com/questions/3240508/javascript-sort-select-elements
+    // at 16:07 on 11/02/2013
+    x = []
+    for(var i=length-1; i>=0; --i) {
+       x.push(pointsBox.options[i]);
+       pointsBox.removeChild(pointsBox.options[i]);
+    }
+    x.sort(function(o1,o2){
+       if(o1.value < o2.value) {
+          return 1;
+       } else if(o1.value > o2.value) {
+          return -1;
+       }
+       return 0;
+    });
+    for(var i=0; i<length; ++i) {
+       pointsBox.appendChild(x[i]);
+    }
+}
+
+/*
+    Saves the currently loaded calibration file
+*/
+function calibration_save_current()
+{
+    inc_busy();
+    var selBox = document.getElementById("CalibrationFileList");
+    fileName = selBox.options[selBox.selectedIndex].value;
+    var nameBox = document.getElementById("calibration_current_name");
+    var notesBox = document.getElementById("calibration_current_description");
+    var cameraBox = document.getElementById("calibration_current_camera");
+    var laserAngleBox = document.getElementById("calibration_current_angle");
+    var laserDistanceBox = document.getElementById("calibration_current_distance");
+    var pointsBox = document.getElementById("calibration_current_points");  
+
+    var toSend = "[header]\n";
+    toSend+="name = "+nameBox.value+"\n";
+    toSend+="notes = "+notesBox.value+"\n";
+    toSend+="camera = "+cameraBox.value+"\n";
+    toSend+="laser-camera-distance = "+laserDistanceBox.value+"\n";
+    toSend+="laser-camera-angle = "+laserAngleBox.value+"\n";
+    toSend+="\n[data]\n";
+
+    for (var i=0; i < pointsBox.length; i++)
+    {
+       toSend += pointsBox.options[i].text + "\n";
+    }
+
+    result = callback_post("/API/Calibration.save?file="+fileName, toSend)
+    alert(result);
+    dec_busy();
+}
+
+function calibration_delete_selected()
+{
+    var selBox = document.getElementById("CalibrationFileList");
+    fileName = selBox.options[selBox.selectedIndex].value;
+    callback_get("/API/Calibration.delete?file="+fileName);
+    calibration_menu_load();
+}
+
+/*
     Loads a calibration file whenever the current selection changes.
 */
 function load_calibration_file()
@@ -208,6 +321,7 @@ function load_calibration_file()
         option.value = newName;
         selBox.add(option);
         selBox.selectedIndex = selBox.options.length-1;
+        load_calibration_file();
     }
     else
     {
@@ -233,8 +347,8 @@ function load_calibration_file()
             X = list[i].split(",")[0];
             Z = list[i].split(",")[1];
             var point = document.createElement("option");
-            point.text = X +"\t->\t"+Z;
-            point.value = X+","+Z;
+            point.text = X +" = "+Z;
+            point.value = X;
             pointsBox.add(point);
         }
 

@@ -212,16 +212,29 @@
             </tr>
             <tr>
                 <td style="border-top: 1px solid gray; vertical-align:top; padding:3px;"><hr/>
-                    <div class="button" style="width:100%;">Save File</div><hr/>
+                    <div class="button" style="width:100%;" onclick="calibration_save_current();">
+                        Save File
+                    </div><hr/>
                     X: <input type="number" id="calibration_current_new_x" style="width:90px;"/>&nbsp;
                     Z: <input type="number" id="calibration_current_new_z" style="width:90px;"/>
-                    <div class="button" style="width:100%;">Add New Point</div><hr/>
-                    <div class="button" style="width:100%;">Remove Selected</div><hr/>
+                    <div class="button" style="width:100%;" onclick="calibration_add_point();">
+                        Add New Point
+                    </div><hr/>
+                    <div class="button" style="width:100%;" onclick="calibration_remove_point();">
+                        Remove Selected
+                    </div><hr/>
+                    <div class="button" style="width:100%; color:red;" id="calibrateToggleAutoRefresh"
+                        onclick="toggle_image_auto_refresh();">
+                        Auto Refresh Camera
+                    </div><hr/>
                     <div class="button" style="width:100%; color:red;">Auto Set X</div><hr/>
-                    <div class="button" style="width:100%; color:red;">Delete File</div><hr/>
+                    <div class="button" style="width:100%; color:red;" 
+                        onclick="calibration_delete_selected();">
+                        Delete File
+                    </div><hr/>
                 </td>
                 <td width="50%" style="border-top: 1px solid gray;  padding:3px;">
-                <select id="calibration_current_points" size="15"  style="height:100%; width:100%;">
+                <select id="calibration_current_points" size="21"  style="height:100%; width:100%;">
 
                 </select>
                 </td>
@@ -229,8 +242,9 @@
         </table>
 
       </td>
-      <td>
-        <h1> Content area</h1>
+      <td style="text-align:center;">
+        <img id="calibrationLaserImage" src="/web/loading.gif" /><hr/>
+        <img id="calibrationGraphImage" src="/web/loading.gif" />
       </td>
 
                               </tr>

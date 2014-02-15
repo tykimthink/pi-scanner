@@ -121,6 +121,25 @@ def getElement(fileName, element):
         tr = str(c.config.get("header", element))
     return tr
 
+def setElement(fileName, element, value):
+    """
+    Used to set the value of an element in the calibration file.
+    """
+    c = Calibrator()
+    c.load_from(calibrationFilesRoot+fileName+".calib.txt")
+    
+    if(element == "data"):
+        pass
+    else:
+        c.config.set("header", element, value)
+    c.save_to(calibrationFilesRoot+fileName+".calib.txt")
+
+def deleteFile(fileName):
+    """
+    Deletes the given calibration file.
+    """
+    os.remove(calibrationFilesRoot+fileName+".calib.txt")
+    
 def test():
     """
     A simple test function for debugging the line finder module.

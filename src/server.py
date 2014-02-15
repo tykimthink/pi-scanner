@@ -81,7 +81,52 @@ class APIHandler(SimpleHTTPServer.SimpleHTTPRequestHandler, object):
                     self.send_header("Content-type", "text/text")
                     self.end_headers()
                     self.wfile.write(bytes(result))
+                elif(function == "delete"):
+                    print("Deleting calibration file: "+args["file"])
+                    Calibrate.deleteFile(args["file"])
+                    self.send_response(200)
+                    self.send_header("Content-type", "text/text")
+                    self.end_headers()
 
+
+        else:
+            super(APIHandler, self).do_GET()
+
+    def do_POST(self):
+        if(self.path.startswith(apiPrefix)):
+            # All API request calls are handled and parsed within this function.
+            # They are then passed onto the appropriate handler function.
+            args = {}
+            function = self.path.replace(apiPrefix, "").split(apiArgStringSep)[0]
+            page = "self"
+            if(apiClassFuncSep in function):
+                page = function.split(apiClassFuncSep)[0]
+                function = function.split(apiClassFuncSep)[1]
+            if(apiArgStringSep in self.path):
+                argString = self.path.split("?")[1]
+                for kvp in argString.split("&"):
+                    key = kvp.split("=")[0]
+                    value = kvp.split("=")[1]
+                    args[key] = value
+                    print(key+":\t"+value)
+            print("Page: \t"+page)
+            print("Function:\t"+function)
+
+            if(page == "Calibration"):
+                if(function=="save"):
+                    fileName = args["file"]
+                    print("saving calibration file: "+fileName)
+
+                    with open(Calibrate.calibrationFilesRoot+fileName+".calib.txt", "wb") as writer:
+                        varLen = int(self.headers['Content-Length'])
+                        towrite = self.rfile.read(varLen)
+                        print(towrite)
+                        writer.write(towrite)
+
+                    self.send_response(200)
+                    self.send_header("Content-type", "text/text")
+                    self.end_headers()
+                    self.wfile.write("Saved file: "+fileName)
 
         else:
             super(APIHandler, self).do_GET()
