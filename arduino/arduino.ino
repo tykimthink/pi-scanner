@@ -1,31 +1,30 @@
-// Sweep
-// by BARRAGAN <http://barraganstudio.com> 
-// This example code is in the public domain.
-
-
 #include <Servo.h> 
- 
-Servo myservo;  // create servo object to control a servo 
-                // a maximum of eight servo objects can be created 
- 
-int pos = 0;    // variable to store the servo position 
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+Servo servoArm;
  
 void setup() 
 { 
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object 
+  lcd.begin(16, 2);
+  servoArm.attach(9);  // attaches the servo on pin 9 to the servo object 
+  lcd.print("Ready and");
+  lcd.setCursor(0,1);
+  lcd.print("waiting!");
 } 
  
  
 void loop() 
-{ 
-  for(pos = 0; pos < 180; pos += 1)  // goes from 0 degrees to 180 degrees 
-  {                                  // in steps of 1 degree 
-    myservo.write(pos);              // tell servo to go to position in variable 'pos' 
-    delay(15);                       // waits 15ms for the servo to reach the position 
+{
+  int pos = 0; 
+  for(pos = 0; pos < 180; pos += 1) 
+  {                                 
+    servoArm.write(pos);            
+    delay(15);                      
   } 
-  for(pos = 180; pos>=1; pos-=1)     // goes from 180 degrees to 0 degrees 
+  for(pos = 180; pos>=1; pos-=1)    
   {                                
-    myservo.write(pos);              // tell servo to go to position in variable 'pos' 
-    delay(15);                       // waits 15ms for the servo to reach the position 
+    servoArm.write(pos);            
+    delay(15);                      
   } 
 } 
