@@ -1,0 +1,23 @@
+
+Arduino Protocol
+-------------------------------------------------------------------------------
+
+This document describes the protocol used by the python server to communicate
+with the arduino. This protocol consists of a set of simple commands sent over
+the top of the serial connection between the PC and arduino.
+
+Note that each charecter is sent as ascii codes. Hence each command will be a
+set number of bytes in length.
+
+Every command is terminated by an underscore charecter '_'
+
+Commands
+-------------------------------------------------------------------------------
+
+GTXXX_ - GO TO XXX
+This command moves the servo directly too the angle specified in XXX. XXX can
+be any number in the range 0 to 180. Sent as 6 bytes in total.
+Examples:
+    71 84 48 48 48 48 95 - moves the arm to position 0
+    71 84 48 48 57 48 95 - moves the arm to position 90
+    71 84 48 49 45 48 95 - moves the arm to position 170
