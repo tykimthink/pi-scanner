@@ -89,7 +89,7 @@ function toggle_image_auto_refresh()
     {
         button.style.color='green';
         button2.style.color='green';
-        image_refresh_handle = window.setInterval("grab_latest_frame();",100);
+        image_refresh_handle = window.setInterval("grab_latest_frame();",300);
     }
     else
     {
