@@ -70,6 +70,7 @@ void loop()
        lcd.print("host closed.");
        idle = true;
        delay(2000);
+       lcd.clear();
        lcd.print("Waiting for");
        lcd.setCursor(0,1);
        lcd.print("host connection.");
