@@ -13,9 +13,9 @@ void setup()
   Serial.begin(9600);
   lcd.begin(16, 2);
   servoArm.attach(9);  // attaches the servo on pin 9 to the servo object 
-  lcd.print("   Ready and");
+  lcd.print("Waiting for");
   lcd.setCursor(0,1);
-  lcd.print("    waiting!");
+  lcd.print("host connection.");
 } 
  
 int extractInt(char buf[], int lsb, int msb)
@@ -39,6 +39,7 @@ void loop()
     char buf [bufSize];
     int bytesRead = Serial.readBytesUntil(CMD_DELIM, buf, bufSize);
     
+    // GT Command
     if(buf[0] == 71 and buf[1] == 84)
     {
        lcd.clear();
@@ -48,16 +49,41 @@ void loop()
        lcd.print(String(moveTo));
        servoArm.write(moveTo);
     }
-    else
+    // HANDSHAKE COMMAND
+    else if(buf[0] == 'H' and buf[1] == 'E' and buf[2] == 'L' and buf[3] == 'L'
+       and buf[4] == 'O')
     {
        lcd.clear();
-       lcd.print("Bad Command:");
+       lcd.print("Now Connected");
        lcd.setCursor(0,1);
-       int i;
-       for(i=0; i<bufSize; i++);
-       {
-         lcd.print(char(buf[i]));
-       }
+       lcd.print("To Host!");
+       Serial.print("HELLO");
+       delay(1000);
+    }
+    // CLOSE CONNECTION COMMAND
+    else if(buf[0] == 'C' and buf[1] == 'L' and buf[2] == 'O' and buf[3] == 'S'
+       and buf[4] == 'E')
+    {
+       lcd.clear();
+       lcd.print("Connection to");
+       lcd.setCursor(0,1);
+       lcd.print("host closed.");
+       idle = true;
+       delay(2000);
+       lcd.print("Waiting for");
+       lcd.setCursor(0,1);
+       lcd.print("host connection.");
+    }
+    // UNKNOWN / INVALID COMMAND
+    else
+    {
+     lcd.print("Bad Command:");
+     lcd.setCursor(0,1);
+     int i;
+     for(i=0; i<bufSize; i++);
+     {
+       lcd.print(char(buf[i]));
+     }
     }
     delay(1000);
   }
@@ -66,9 +92,9 @@ void loop()
     if(idle == false)
     {
       lcd.clear();
-      lcd.print("Idle. Continuing");
+      lcd.print("Connected to");
       lcd.setCursor(0,1);
-      lcd.print("happily...!");
+      lcd.print("host.");
       idle=true;
     }
   }
