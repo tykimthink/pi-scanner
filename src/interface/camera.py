@@ -5,6 +5,8 @@ program only uses this interface we can switch between the raspberry pi camera m
 USB webcam.
 """
 
+import io
+
 import numpy
 
 raspi_available = False
@@ -23,8 +25,8 @@ try:
 except:
     print("[ERROR] Could not import the opencv2 module!")
 
-cam_defaults = {"resolution": (840, 640),
-"rotation": 180}
+cam_defaults = {"resolution": (320, 240),
+"rotation": 0}
 
 class CameraInterface:
 
@@ -91,13 +93,17 @@ class CameraInterface:
 
         tr = None
         if(raspi_available):
-            self.cam.capture(stream, "jpeg")
             tr = io.BytesIO()
+            self.cam.capture(tr, format="jpeg")
+            #trpi = numpy.fromstring(tr.getvalue(), dtype=numpy.uint8)
+            #return trpi
+            return tr.getvalue()
         elif(opencv_available):
             ret, frame = self.cam.read()
             if(ret):
                 ret, val = cv2.imencode(".jpg", frame)
                 tr = val
+		return numpy.array(tr).tostring()
             else:
                 return None
         else:
