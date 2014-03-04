@@ -35,7 +35,7 @@ class CameraInterface:
                 self.configure_camera(cam_defaults)
                 print("Initialized camera interface using picamera")
             elif(opencv_available):
-                self.cam = cv2.VideoCapture(1)
+                self.cam = cv2.VideoCapture(0)
                 print("Initialized camera interface using opencv")
             else:
                 print("[ERROR] No webcam interface opencv_available!")
